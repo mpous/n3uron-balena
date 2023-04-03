@@ -1,0 +1,40 @@
+version: '2.1'
+
+services:
+  n3uron:
+    image: n3uronhub/n3uron:v1.21.4
+    ports:
+      - 8003:8003
+      - 8443:8443
+    volumes:
+      - n3_config:/opt/n3uron/config
+      - n3_data:/opt/n3uron/data
+      - n3_licenses:/opt/n3uron/licenses
+      - n3_log:/opt/n3uron/log
+    restart: always
+  
+  hivemq:
+    image: hivemq/hivemq-ce:snapshot
+    ports:
+      - 1883:1883 # MQTT/TCP protocol port
+      - 8080:8080
+    environment:
+      JAVA_OPTS: "-XX:+UnlockExperimentalVMOptions -XX:InitialRAMPercentage=30 -XX:MaxRAMPercentage=80 -XX:MinRAMPercentage=30"
+  
+  mongo:
+    image: mongo:5
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+volumes:
+  n3_config:
+  n3_data:
+  n3_licenses:
+  n3_log:
+  mongo_data:
